@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     10-Dec-2004 09:50:10                                                        
+
+     Bloglines Java API
+                   
+     Zohar                                                      
+     ====================================================================== -->
+<project name="bloglines" default="dist" basedir=".">
+    <description>
+    	Bloglines REST API Java binding
+    </description>
+	<property name="location.classes" value="classes"/>
+	<property name="location.dist" value="dist"/>
+	<property name="location.lib" value="lib"/>
+	<property name="location.src" value="main/src"/>
+	<property name="location.src.test" value="test/src"/>
+	
+	<path  id="cp">	    
+		<fileset dir="${location.lib}" id="id">
+			<include name="**\*.jar"/>
+		</fileset>
+	</path>
+
+
+
+    <target name="dist" depends="build">
+        <jar destfile="${location.dist}\bloglines.jar">
+ 			<fileset dir="${location.classes}">
+ 				<include name="**\*"/>
+ 			</fileset>
+        </jar>
+    </target>
+
+	<target name="test" depends="build">
+	     <junit></junit>   
+    </target>
+
+    <target name="build" depends="clean">
+    	<javac srcdir="${location.src}"
+         destdir="${location.classes}"
+    	 classpathref="cp"	
+         debug="on"/>
+    	<javac srcdir="${location.src.test}"
+         destdir="${location.classes}"
+         classpathref="cp"
+    	 debug="on"/>
+    </target>
+	
+    <target name="clean">
+    	<delete dir="${location.classes}"/>	
+    	<delete dir="${location.dist}"/>
+    	<mkdir dir="${location.dist}"/>
+    	<mkdir dir="${location.classes}"/>
+    </target>
+
+</project>
+
