@@ -1,6 +1,6 @@
 package org.codehaus.bloglines;
 /*
- * Created on Nov 24, 2004
+ * 
  *
  * 
  * Copyright (c) Zohar Melamed All rights reserved.
@@ -18,7 +18,7 @@ package org.codehaus.bloglines;
  * and/or other materials provided with the distribution.
  * 
  * 3. Due credit should be given to The Codehaus and Contributors
- * http://timtam.codehaus.org/
+ * http://jbloglines.codehaus.org/
  * 
  * THIS SOFTWARE IS PROVIDED BY THE CODEHAUS AND CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED

@@ -11,7 +11,6 @@ import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 /*
- * Created on Nov 24, 2004
  *
  * 
  * Copyright (c) Zohar Melamed All rights reserved.
@@ -29,7 +28,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
  * and/or other materials provided with the distribution.
  * 
  * 3. Due credit should be given to The Codehaus and Contributors
- * http://timtam.codehaus.org/
+ * http://jbloglines.codehaus.org/
  * 
  * THIS SOFTWARE IS PROVIDED BY THE CODEHAUS AND CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
