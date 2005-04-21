@@ -36,56 +36,51 @@
 
 package org.codehaus.bloglines;
 
-import java.util.List;
-
-import org.codehaus.bloglines.exceptions.BloglinesException;
-import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
-
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import junit.framework.TestCase;
+import org.codehaus.bloglines.exceptions.BloglinesException;
+import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
+import org.codehaus.bloglines.unmarshall.ItemsUnmarshallImpl;
 
-/**
- * @author Sarah
- *
- */
+import java.util.List;
+
 public class ItemsUnmarshallTestCase extends TestCase {
-	private final String ITEMS = 
-		"<?xml version='1.0'?>"+
-			"<rss version='2.0' "+
-			 "xmlns:dc='http://purl.org/dc/elements/1.1/' "+
-			 "xmlns:bloglines='http://www.bloglines.com/services/module' "+
-			 "xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"+
-			  "<channel>"+
-			    "<title>Feed Title</title>"+
-			    "<link>http://www.feed.example/</link>"+
-			    "<description>The description of the feed</description>"+
-			    "<language>en-us</language>"+
-			    "<webMaster>support@bloglines.com</webMaster>"+
-			    "<bloglines:siteid>66</bloglines:siteid>"+
-			    "<item>"+
-				"<title>An entry title</title>"+
-					"<dc:creator>John</dc:creator>"+
-			        "<guid isPermaLink='true'>http://feed.example/2004/09/27/1.html</guid>"+
-			        "<link>http://feed.example/2004/09/27/1.html</link>"+
-			        "<description><![CDATA[Here is the entry text.]]></description>"+
-			        "<pubDate>Mon, 27 Sep 2004 8:04:17 GMT</pubDate>"+
-			        "<bloglines:itemid>12</bloglines:itemid>"+
-			    "</item>"+
-			    "</channel>"+
-			"</rss>";
-	
-	public void testUnmarshallFeedItems() throws BloglinesException {
-		ItemsUnmarshall itemsUnmarshall = new ItemsUnmarshall();
-		SyndFeed feed = itemsUnmarshall.unmarshal(ITEMS);
-		assertEquals("Feed Title",feed.getTitle());
-		assertEquals("The description of the feed",feed.getDescription());
-		List entries = feed.getEntries();
-		assertEquals(1,entries.size());
-		SyndEntry entry = (SyndEntry) entries.get(0);
-		assertEquals("An entry title",entry.getTitle());
-		List contents = entry.getContents();
-		contents.getClass();
-	}
+    private final String ITEMS =
+            "<?xml version='1.0'?>" +
+            "<rss version='2.0' " +
+            "xmlns:dc='http://purl.org/dc/elements/1.1/' " +
+            "xmlns:bloglines='http://www.bloglines.com/services/module' " +
+            "xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>" +
+            "<channel>" +
+            "<title>Feed Title</title>" +
+            "<link>http://www.feed.example/</link>" +
+            "<description>The description of the feed</description>" +
+            "<language>en-us</language>" +
+            "<webMaster>support@bloglines.com</webMaster>" +
+            "<bloglines:siteid>66</bloglines:siteid>" +
+            "<item>" +
+            "<title>An entry title</title>" +
+            "<dc:creator>John</dc:creator>" +
+            "<guid isPermaLink='true'>http://feed.example/2004/09/27/1.html</guid>" +
+            "<link>http://feed.example/2004/09/27/1.html</link>" +
+            "<description><![CDATA[Here is the entry text.]]></description>" +
+            "<pubDate>Mon, 27 Sep 2004 8:04:17 GMT</pubDate>" +
+            "<bloglines:itemid>12</bloglines:itemid>" +
+            "</item>" +
+            "</channel>" +
+            "</rss>";
+
+    public void testUnmarshallFeedItems() throws BloglinesException {
+        ItemsUnmarshall itemUnmarshall = new ItemsUnmarshallImpl();
+        SyndFeed feed = itemUnmarshall.unmarshal(ITEMS);
+        assertEquals("Feed Title", feed.getTitle());
+        assertEquals("The description of the feed", feed.getDescription());
+        List entries = feed.getEntries();
+        assertEquals(1, entries.size());
+        SyndEntry entry = (SyndEntry) entries.get(0);
+        assertEquals("An entry title", entry.getTitle());
+        List contents = entry.getContents();
+        contents.getClass();
+    }
 }
