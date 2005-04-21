@@ -1,74 +1,85 @@
-/*
- * Created on 10-Dec-2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.codehaus.bloglines;
 
-import junit.framework.TestCase;
-
+import com.sun.syndication.feed.synd.SyndFeed;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCaller;
 import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
 import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
+import org.jmock.Mock;
+import org.jmock.MockObjectTestCase;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import java.util.Date;
 
-/**
- * @author MELAMEDZ
- *
- * 
- */
-public class BloglinesTestCase extends TestCase {
-	class MockOutlineUnmarshall extends OutlineUnmarshal{
-		public boolean unmarshallCalled ;
-		/* (non-Javadoc)
-		 * @see org.codehaus.bloglines.unmarshall.OutlineUnmarshal#unmarshal(java.lang.String)
-		 */
-		public Outline unmarshal(String outlines) {
-			unmarshallCalled = true;
-			return super.unmarshal(outlines);
-		}
-	};
-	
-	class MockItemUnmarshall extends ItemsUnmarshall{
-		public  boolean umarshallCalled;
+public class BloglinesTestCase extends MockObjectTestCase {
+    private Mock restCallerMock;
+    private Mock outlineMarshallMock;
+    private Mock itemUnmarshallMock;
+    private Bloglines bloglines;
 
-		/* (non-Javadoc)
-		 * @see org.codehaus.bloglines.unmarshall.ItemsUnmarshall#unmarshal(java.lang.String)
-		 */
-		public SyndFeed unmarshal(String items) throws BloglinesException {
-			umarshallCalled = true;
-			return super.unmarshal(items);
-		}
-	};
-	
-	class MockRestCaller extends BloglinesRestCaller{
-		private String ret;
-		public String method;
-		public String[]args;
-		
-		/**
-		 * @param ret
-		 */
-		public MockRestCaller(String ret) {
-			this.ret = ret;
-		}
-		/* (non-Javadoc)
-		 * @see org.codehaus.bloglines.http.BloglinesRestCaller#call(java.lang.String, java.lang.String[])
-		 */
-		public String call(String method, String[] args)
-				throws BloglinesException {
-			// TODO Auto-generated method stub
-			return super.call(method, args);
-		}
-	};
-	public void testListSubs() {
-		
-		new Bloglines(new MockOutlineUnmarshall(),
-					  new MockItemUnmarshall(),
-					  new MockRestCaller("ff"));
-		
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        restCallerMock = mock(BloglinesRestCaller.class);
+        outlineMarshallMock = mock(OutlineUnmarshal.class);
+        itemUnmarshallMock = mock(ItemsUnmarshall.class);
+
+        bloglines = new Bloglines((OutlineUnmarshal) outlineMarshallMock.proxy(),
+                                  (ItemsUnmarshall) itemUnmarshallMock.proxy(),
+                                  (BloglinesRestCaller) restCallerMock.proxy());
+    }
+
+    public void testSettingCredentialsCallsThroughToTheRestApi() {
+        String username = "sakfhaksf";
+        String password = "dsakufhasfh";
+
+        restCallerMock.expects(once()).method("setCredentials").with(same(username), same(password));
+
+        bloglines.setCredentials(username, password);
+
+    }
+
+    public void testListSubscriptionsCallsTheRestApiAndUnmarshallsTheResults() throws BloglinesException {
+        Outline expectedSubscriptionOutline = new Outline();
+        String bloglinesRestResponse = "This is the response from Bloglines";
+        restCallerMock.expects(once()).method("call").with(eq("listsubs"), NULL).will(returnValue(bloglinesRestResponse));
+        outlineMarshallMock.expects(once()).method("unmarshal").with(same(bloglinesRestResponse)).will(returnValue(expectedSubscriptionOutline));
+
+        Outline subscriptionOutline = bloglines.listSubscriptions();
+
+        assertSame(expectedSubscriptionOutline, subscriptionOutline);
+    }
+
+    public void testGetItemsCallsTheRestApiAndUnmarshallsTheResults() throws BloglinesException {
+        SyndFeed expectedSyndFeed = (SyndFeed) mock(SyndFeed.class).proxy();
+        String bloglinesRestResponse = "This is the response from Bloglines";
+        String subscriptionId = "343485";
+        String[] parameters = new String[]{"s", subscriptionId, "n", "0"};
+        restCallerMock.expects(once()).method("call").with(eq("getitems"), eq(parameters)).will(returnValue(bloglinesRestResponse));
+        itemUnmarshallMock.expects(once()).method("unmarshal").with(same(bloglinesRestResponse)).will(returnValue(expectedSyndFeed));
+
+        Date startDate = new Date();
+        Outline outline = new Outline();
+        outline.setSubscriptionId(subscriptionId);
+
+        SyndFeed syndFeed = bloglines.getItems(outline, false, startDate);
+
+        assertSame(expectedSyndFeed, syndFeed);
+    }
+
+    public void testGetItemsCallsTheRestApiPassingThroughTheMarkAsReadFlag() throws BloglinesException {
+        SyndFeed expectedSyndFeed = (SyndFeed) mock(SyndFeed.class).proxy();
+        String bloglinesRestResponse = "This is the response from Bloglines";
+        String subscriptionId = "343485";
+        String[] parameters = new String[]{"s", subscriptionId, "n", "1"};
+        restCallerMock.expects(once()).method("call").with(eq("getitems"), eq(parameters)).will(returnValue(bloglinesRestResponse));
+        itemUnmarshallMock.expects(once()).method("unmarshal").with(same(bloglinesRestResponse)).will(returnValue(expectedSyndFeed));
+
+        Date startDate = new Date();
+        Outline outline = new Outline();
+        outline.setSubscriptionId(subscriptionId);
+
+        SyndFeed syndFeed = bloglines.getItems(outline, true, startDate);
+
+        assertSame(expectedSyndFeed, syndFeed);
+    }
+
 }

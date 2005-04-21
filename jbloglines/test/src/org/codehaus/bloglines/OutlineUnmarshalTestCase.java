@@ -36,50 +36,46 @@
 
 package org.codehaus.bloglines;
 
-import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
-
 import junit.framework.TestCase;
+import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
+import org.codehaus.bloglines.unmarshall.OutlineUnmarshalImpl;
 
-/**
- * @author Sarah
- *
- */
 public class OutlineUnmarshalTestCase extends TestCase {
-	private static final String OUTLINE_OPML = "<?xml version='1.0' encoding='utf-8'?>"+
-	"<opml version='1.0'>"+
-	"<head>"+
-	    "<title>Bloglines Subscriptions</title>"+
-	    "<dateCreated>Sun, 28 Nov 2004 10:45:05 GMT</dateCreated>"+
-	    "<ownerName>zohar@codehaus.org</ownerName>"+
-	"</head>"+
-	"<body>"+
-	  	"<outline title='Subscriptions'>"+
-		    "<outline title='Bloglines | News' htmlUrl='http://www.bloglines.com' type='rss' xmlUrl='http://www.bloglines.com/rss/about/news'  BloglinesSubId='5259174'  BloglinesUnread='8' BloglinesIgnore='0' />"+
-		   " <outline title='Stuff' BloglinesSubId='5259181' BloglinesIgnore='0'>"+
-		  "      <outline title='Boing Boing' htmlUrl='http://www.boingboing.net/' type='rss' xmlUrl='http://boingboing.net/rss.xml'  BloglinesSubId='5259182'  BloglinesUnread='36' BloglinesIgnore='0' />"+
-		 "   </outline>"+
-		"</outline>"+
-"</body>"+
-"</opml>";
+    private static final String OUTLINE_OPML = "<?xml version='1.0' encoding='utf-8'?>" +
+                                               "<opml version='1.0'>" +
+                                               "<head>" +
+                                               "<title>Bloglines Subscriptions</title>" +
+                                               "<dateCreated>Sun, 28 Nov 2004 10:45:05 GMT</dateCreated>" +
+                                               "<ownerName>zohar@codehaus.org</ownerName>" +
+                                               "</head>" +
+                                               "<body>" +
+                                               "<outline title='Subscriptions'>" +
+                                               "<outline title='Bloglines | News' htmlUrl='http://www.bloglines.com' type='rss' xmlUrl='http://www.bloglines.com/rss/about/news'  BloglinesSubId='5259174'  BloglinesUnread='8' BloglinesIgnore='0' />" +
+                                               " <outline title='Stuff' BloglinesSubId='5259181' BloglinesIgnore='0'>" +
+                                               "      <outline title='Boing Boing' htmlUrl='http://www.boingboing.net/' type='rss' xmlUrl='http://boingboing.net/rss.xml'  BloglinesSubId='5259182'  BloglinesUnread='36' BloglinesIgnore='0' />" +
+                                               "   </outline>" +
+                                               "</outline>" +
+                                               "</body>" +
+                                               "</opml>";
 
-	public void testOutlineUnmarshall() {
-		OutlineUnmarshal ou = new OutlineUnmarshal();
-		Outline topLevel = ou.unmarshal(OUTLINE_OPML);
-		assertEquals("Subscriptions",topLevel.getTitle());
-		assertEquals(false,topLevel.isFeed());
-		
-		Outline[] outlines = topLevel.getChildren();
-		assertEquals(2,outlines.length);
-		Outline stuff = outlines[1];
-		assertEquals("Stuff",stuff.getTitle());
-		assertEquals(1,stuff.getChildren().length);
-		Outline boingboing = stuff.getChildren()[0];
-		assertEquals("Boing Boing",boingboing.getTitle());
-		assertTrue(boingboing.isFeed());
-		assertEquals("http://www.boingboing.net/",boingboing.getHtmlUrl());
-		assertEquals("http://boingboing.net/rss.xml",boingboing.getXmlUrl());
-		assertTrue(boingboing.getUnread()>=26);
-		assertEquals(boingboing.getSubId(),"5259182");
-		assertFalse(boingboing.getIgnore());
-	}		
+    public void testOutlineUnmarshall() {
+        OutlineUnmarshal ou = new OutlineUnmarshalImpl();
+        Outline topLevel = ou.unmarshal(OUTLINE_OPML);
+        assertEquals("Subscriptions", topLevel.getTitle());
+        assertEquals(false, topLevel.isFeed());
+
+        Outline[] outlines = topLevel.getChildren();
+        assertEquals(2, outlines.length);
+        Outline stuff = outlines[1];
+        assertEquals("Stuff", stuff.getTitle());
+        assertEquals(1, stuff.getChildren().length);
+        Outline boingboing = stuff.getChildren()[0];
+        assertEquals("Boing Boing", boingboing.getTitle());
+        assertTrue(boingboing.isFeed());
+        assertEquals("http://www.boingboing.net/", boingboing.getHtmlUrl());
+        assertEquals("http://boingboing.net/rss.xml", boingboing.getXmlUrl());
+        assertTrue(boingboing.getUnread() >= 26);
+        assertEquals(boingboing.getSubscriptionId(), "5259182");
+        assertFalse(boingboing.getIgnore());
+    }
 }

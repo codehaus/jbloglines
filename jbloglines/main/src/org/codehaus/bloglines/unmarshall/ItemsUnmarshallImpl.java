@@ -1,23 +1,23 @@
 /*
- *
- *
+ * 
+ * 
  * Copyright (c) Zohar Melamed All rights reserved.
- *
- *
+ * 
+ * 
  * Redistribution and use of this software and associated documentation
  * ("Software"), with or without modification, are permitted provided that the
  * following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain copyright statements and
  * notices. Redistributions must also contain a copy of this document.
- *
+ * 
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * 
  * 3. Due credit should be given to The Codehaus and Contributors
  * http://jbloglines.codehaus.org/
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE CODEHAUS AND CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,16 +28,35 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *
- *
+ * 
+ * 
+ *  
  */
 
 package org.codehaus.bloglines.unmarshall;
 
 import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 
-public interface ItemsUnmarshall {
-    SyndFeed unmarshal(String items) throws BloglinesException;
+import java.io.StringReader;
+
+/**
+ * @author Zohar
+ */
+public class ItemsUnmarshallImpl implements ItemsUnmarshall {
+
+    /**
+     * @param items
+     * @throws BloglinesException
+     */
+    public SyndFeed unmarshal(String items) throws BloglinesException {
+        SyndFeedInput input = new SyndFeedInput();
+        try {
+            return input.build(new StringReader(items));
+        } catch (Exception e) {
+            throw new BloglinesException("umarshalling items failed", e);
+        }
+    }
+
 }

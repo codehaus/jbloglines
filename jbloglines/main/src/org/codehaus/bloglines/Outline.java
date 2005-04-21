@@ -1,4 +1,5 @@
 package org.codehaus.bloglines;
+
 /*
  * 
  *
@@ -37,127 +38,128 @@ package org.codehaus.bloglines;
 
 /**
  * @author Sarah
- *
  */
 public class Outline {
 
-	private Outline[] children;
-	private String title;
-	private String type;
-	private String htmlUrl;
-	private String xmlUrl;
-	private int unread;
-	private String subId;
-	private boolean ignore;
+    private Outline[] children;
+    private String title;
+    private String type;
+    private String htmlUrl;
+    private String xmlUrl;
+    private int unread;
+    private String subscriptionId;
+    private boolean ignore;
 
 
-	/**
-	 * @return
-	 */
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * @return
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 * @param title The title to set.
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	/**
-	 * @return
-	 */
-	public boolean isFeed() {
-		return "rss".equals(type);
-	}
+    /**
+     * @param title The title to set.
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	/**
-	 * @return
-	 */
-	public Outline[] getChildren() {
-		return children;
-	}
+    /**
+     * @return
+     */
+    public boolean isFeed() {
+        return "rss".equals(type);
+    }
 
-	/**
-	 * @param children The children to set.
-	 */
-	public void setChidlren(Outline[] children) {
-		this.children = children;
-	}
+    /**
+     * @return
+     */
+    public Outline[] getChildren() {
+        return children;
+    }
 
-	/**
-	 * @param attribute
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
+    /**
+     * @param children The children to set.
+     */
+    public void setChidlren(Outline[] children) {
+        this.children = children;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getHtmlUrl() {
-		return htmlUrl;
-	}
-	
-	/**
-	 * @param htmlUrl The htmlUrl to set.
-	 */
-	public void setHtmlUrl(String htmlUrl) {
-		this.htmlUrl = htmlUrl;
-	}
+    /**
+     * @param attribute
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getXmlUrl() {
-		return xmlUrl;
-	}
-	
-	/**
-	 * @param xmlUrl The xmlUrl to set.
-	 */
-	public void setXmlUrl(String xmlUrl) {
-		this.xmlUrl = xmlUrl;
-	}
+    /**
+     * @return
+     */
+    public String getHtmlUrl() {
+        return htmlUrl;
+    }
 
-	/**
-	 * @return
-	 */
-	public int getUnread() {
-		return unread;
-	}
-	
-	/**
-	 * @param unread The unread to set.
-	 */
-	public void setUnread(int unread) {
-		this.unread = unread;
-	}
+    /**
+     * @param htmlUrl The htmlUrl to set.
+     */
+    public void setHtmlUrl(String htmlUrl) {
+        this.htmlUrl = htmlUrl;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getSubId() {
-		return subId;
-	}
-	
-	/**
-	 * @param subId The subId to set.
-	 */
-	public void setSubId(String subId) {
-		this.subId = subId;
-	}
+    /**
+     * @return
+     */
+    public String getXmlUrl() {
+        return xmlUrl;
+    }
 
-	/**
-	 * 
-	 */
-	public boolean getIgnore() {
-		return ignore;
-	}
-	/**
-	 * @param ignore
-	 */
-	public void setIgnore(boolean ignore) {
-		this.ignore = ignore;
-	}
+    /**
+     * @param xmlUrl The xmlUrl to set.
+     */
+    public void setXmlUrl(String xmlUrl) {
+        this.xmlUrl = xmlUrl;
+    }
+
+    /**
+     * @return
+     */
+    public int getUnread() {
+        return unread;
+    }
+
+    /**
+     * @param unread The unread to set.
+     */
+    public void setUnread(int unread) {
+        this.unread = unread;
+    }
+
+    /**
+     * @return
+     */
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    /**
+     * @param subscriptionId The subscriptionId to set.
+     */
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    /**
+     *
+     */
+    public boolean getIgnore() {
+        return ignore;
+    }
+
+    /**
+     * @param ignore
+     */
+    public void setIgnore(boolean ignore) {
+        this.ignore = ignore;
+    }
 }

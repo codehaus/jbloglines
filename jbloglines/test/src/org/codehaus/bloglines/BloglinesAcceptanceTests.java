@@ -1,9 +1,14 @@
 package org.codehaus.bloglines;
-import org.codehaus.bloglines.exceptions.BloglinesException;
 
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import junit.framework.TestCase;
+import org.apache.commons.httpclient.HttpClient;
+import org.codehaus.bloglines.exceptions.BloglinesException;
+import org.codehaus.bloglines.http.BloglinesRestCallerImpl;
+import org.codehaus.bloglines.http.HttpCallerImpl;
+import org.codehaus.bloglines.unmarshall.ItemsUnmarshallImpl;
+import org.codehaus.bloglines.unmarshall.OutlineUnmarshalImpl;
+
 /*
  * Created on Nov 24, 2004
  *
@@ -42,7 +47,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Zohar
- *
  */
 // we expect :
 //<outline title="Subscriptions">
@@ -53,40 +57,44 @@ import junit.framework.TestCase;
 //</outline>
 
 public class BloglinesAcceptanceTests extends TestCase {
-	private static final String PASSWORD = "poopoo";
-	private static final String OWNER_NAME = "zohar@codehaus.org";
-	
-	public void testListSubs() throws BloglinesException {
-		Bloglines jbl = new Bloglines();
-		jbl.setCredentials(OWNER_NAME,PASSWORD);
-		Outline topLevel = jbl.listSubscriptions();
-		
-		assertEquals("Subscriptions",topLevel.getTitle());
-		assertEquals(false,topLevel.isFeed());
-		
-		Outline[] outlines = topLevel.getChildren();
-		assertEquals(2,outlines.length);
-		Outline stuff = outlines[1];
-		assertEquals("Stuff",stuff.getTitle());
-		assertEquals(1,stuff.getChildren().length);
-		Outline boingboing = stuff.getChildren()[0];
-		assertEquals("Boing Boing",boingboing.getTitle());
-		assertTrue(boingboing.isFeed());
-		assertEquals("http://www.boingboing.net/",boingboing.getHtmlUrl());
-		assertEquals("http://boingboing.net/rss.xml",boingboing.getXmlUrl());
-		assertEquals(boingboing.getSubId(),"5259182");
-		assertFalse(boingboing.getIgnore());
-	}
+    private static final String PASSWORD = "poopoo";
+    private static final String OWNER_NAME = "zohar@codehaus.org";
+    private Bloglines bloglines;
 
-	public void testGetItems() throws BloglinesException {
-		Bloglines jbl = new Bloglines();
-		jbl.setCredentials(OWNER_NAME,PASSWORD);
-		Outline topLevel = jbl.listSubscriptions();
-		Outline[] outlines = topLevel.getChildren();
-		Outline stuff = outlines[1];
-		Outline boingboing = stuff.getChildren()[0];
-		SyndFeed items = jbl.getItems(boingboing,false,null);
-		assertEquals("Boing Boing",items.getTitle());
-		assertEquals("http://www.boingboing.net/",items.getLink());
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        bloglines = new Bloglines(new OutlineUnmarshalImpl(), new ItemsUnmarshallImpl(), new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient())));
+    }
+
+    public void testListSubs() throws BloglinesException {
+        bloglines.setCredentials(OWNER_NAME, PASSWORD);
+        Outline topLevel = bloglines.listSubscriptions();
+
+        assertEquals("Subscriptions", topLevel.getTitle());
+        assertEquals(false, topLevel.isFeed());
+
+        Outline[] outlines = topLevel.getChildren();
+        assertEquals(2, outlines.length);
+        Outline stuff = outlines[1];
+        assertEquals("Stuff", stuff.getTitle());
+        assertEquals(1, stuff.getChildren().length);
+        Outline boingboing = stuff.getChildren()[0];
+        assertEquals("Boing Boing", boingboing.getTitle());
+        assertTrue(boingboing.isFeed());
+        assertEquals("http://www.boingboing.net/", boingboing.getHtmlUrl());
+        assertEquals("http://boingboing.net/rss.xml", boingboing.getXmlUrl());
+        assertEquals(boingboing.getSubscriptionId(), "5259182");
+        assertFalse(boingboing.getIgnore());
+    }
+
+    public void testGetItems() throws BloglinesException {
+        bloglines.setCredentials(OWNER_NAME, PASSWORD);
+        Outline topLevel = bloglines.listSubscriptions();
+        Outline[] outlines = topLevel.getChildren();
+        Outline stuff = outlines[1];
+        Outline boingboing = stuff.getChildren()[0];
+        SyndFeed items = bloglines.getItems(boingboing, false, null);
+        assertEquals("Boing Boing", items.getTitle());
+        assertEquals("http://www.boingboing.net/", items.getLink());
+    }
 }

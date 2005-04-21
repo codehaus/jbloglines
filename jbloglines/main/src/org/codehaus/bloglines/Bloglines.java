@@ -1,14 +1,12 @@
 package org.codehaus.bloglines;
-import java.io.IOException;
-import java.util.Date;
 
-import org.apache.commons.httpclient.HttpException;
+import com.sun.syndication.feed.synd.SyndFeed;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCaller;
 import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
 import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import java.util.Date;
 
 /*
  *
@@ -46,58 +44,51 @@ import com.sun.syndication.feed.synd.SyndFeed;
 
 /**
  * @author Zohar
- *
  */
-public class Bloglines {
-	private static final String GETITEMS = "getitems";
-	private static final String LISTSUBS = "listsubs";
-	private OutlineUnmarshal outlineUnmarshal;
-	private ItemsUnmarshall itemsUnmarshall;
-	private BloglinesRestCaller restCaller;
+public final class Bloglines {
+    private static final String GETITEMS = "getitems";
+    private static final String LISTSUBS = "listsubs";
+    private OutlineUnmarshal outlineUnmarshal;
+    private ItemsUnmarshall itemUnmarshall;
+    private BloglinesRestCaller restCaller;
 
 
-	
-	/**
-	 * @param outlineUnmarshal
-	 * @param itemsUnmarshall
-	 * @param restCaller
-	 */
-	public Bloglines(OutlineUnmarshal outlineUnmarshal,
-			ItemsUnmarshall itemsUnmarshall, BloglinesRestCaller restCaller) {
-		this.outlineUnmarshal = outlineUnmarshal;
-		this.itemsUnmarshall = itemsUnmarshall;
-		this.restCaller = restCaller;
-	}
-	/**
-	 * 
-	 */
-	public Bloglines() {
-		outlineUnmarshal = new OutlineUnmarshal();
-		itemsUnmarshall = new ItemsUnmarshall();
-		restCaller = new BloglinesRestCaller();
-	}
+    /**
+     * @param outlineUnmarshal
+     * @param itemUnmarshall
+     * @param restCaller
+     */
+    public Bloglines(OutlineUnmarshal outlineUnmarshal,
+                     ItemsUnmarshall itemUnmarshall, BloglinesRestCaller restCaller) {
+        this.outlineUnmarshal = outlineUnmarshal;
+        this.itemUnmarshall = itemUnmarshall;
+        this.restCaller = restCaller;
+    }
 
-	/**
-	 * @param name bloglines account name
-	 * @param password bloglines account password
-	 */
-	public void setCredentials(String name, String password) {
-		restCaller.setCredentials(name,password);
-	}
+    /**
+     * @param name     bloglines account name
+     * @param password bloglines account password
+     */
+    public void setCredentials(String name, String password) {
+        restCaller.setCredentials(name, password);
+    }
 
-	/**
-	 * @return
-	 * @throws IOException
-	 * @throws HttpException
-	 */
-	public Outline listSubscriptions() throws BloglinesException{
-		String outline = restCaller.call(LISTSUBS, null);
-		return outlineUnmarshal.unmarshal(outline);
-	}
-	
-	public SyndFeed getItems(Outline containingOutline,boolean markasRead,Date startDate) throws BloglinesException{
-		String items = restCaller.call(GETITEMS, new String[]{"s",containingOutline.getSubId(),"n",markasRead?"1":"0"});
-		return itemsUnmarshall.unmarshal(items);
-		
-	}
+    public Outline listSubscriptions() throws BloglinesException {
+        String outline = restCaller.call(LISTSUBS, null);
+        return outlineUnmarshal.unmarshal(outline);
+    }
+
+    // TODO - startDate doesn't seem to be used
+    public SyndFeed getItems(Outline containingOutline, boolean markasRead, Date startDate) throws BloglinesException {
+        String items = restCaller.call(GETITEMS, new String[]{"s", containingOutline.getSubscriptionId(), "n", convertToFlag(markasRead)});
+        return itemUnmarshall.unmarshal(items);
+    }
+
+    private String convertToFlag(boolean markasRead) {
+        String flag = "0";
+        if (markasRead) {
+            return "1";
+        }
+        return flag;
+    }
 }
