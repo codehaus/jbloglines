@@ -33,12 +33,13 @@
  * 
  *  
  */
-
 package org.codehaus.bloglines;
 
 import junit.framework.TestCase;
 import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
 import org.codehaus.bloglines.unmarshall.OutlineUnmarshalImpl;
+
+// TODO - rename me to OutlineUnmarshalImplTest
 
 public class OutlineUnmarshalTestCase extends TestCase {
     private static final String OUTLINE_OPML = "<?xml version='1.0' encoding='utf-8'?>" +
@@ -78,4 +79,5 @@ public class OutlineUnmarshalTestCase extends TestCase {
         assertEquals(boingboing.getSubscriptionId(), "5259182");
         assertFalse(boingboing.getIgnore());
     }
+
 }

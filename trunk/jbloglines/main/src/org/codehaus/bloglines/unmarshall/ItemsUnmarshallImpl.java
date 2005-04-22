@@ -32,7 +32,6 @@
  * 
  *  
  */
-
 package org.codehaus.bloglines.unmarshall;
 
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -41,17 +40,14 @@ import org.codehaus.bloglines.exceptions.BloglinesException;
 
 import java.io.StringReader;
 
-/**
- * @author Zohar
- */
 public class ItemsUnmarshallImpl implements ItemsUnmarshall {
+    private SyndFeedInput input;
 
-    /**
-     * @param items
-     * @throws BloglinesException
-     */
+    public ItemsUnmarshallImpl(SyndFeedInput input) {
+        this.input = input;
+    }
+
     public SyndFeed unmarshal(String items) throws BloglinesException {
-        SyndFeedInput input = new SyndFeedInput();
         try {
             return input.build(new StringReader(items));
         } catch (Exception e) {

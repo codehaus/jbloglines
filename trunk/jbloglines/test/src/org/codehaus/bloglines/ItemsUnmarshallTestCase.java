@@ -33,54 +33,79 @@
  * 
  *  
  */
-
 package org.codehaus.bloglines;
 
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import junit.framework.TestCase;
+import com.sun.syndication.io.SyndFeedInput;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
 import org.codehaus.bloglines.unmarshall.ItemsUnmarshallImpl;
+import org.jmock.Mock;
+import org.jmock.cglib.MockObjectTestCase;
+import org.jmock.core.Constraint;
 
-import java.util.List;
+import java.io.StringReader;
 
-public class ItemsUnmarshallTestCase extends TestCase {
-    private final String ITEMS =
-            "<?xml version='1.0'?>" +
-            "<rss version='2.0' " +
-            "xmlns:dc='http://purl.org/dc/elements/1.1/' " +
-            "xmlns:bloglines='http://www.bloglines.com/services/module' " +
-            "xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>" +
-            "<channel>" +
-            "<title>Feed Title</title>" +
-            "<link>http://www.feed.example/</link>" +
-            "<description>The description of the feed</description>" +
-            "<language>en-us</language>" +
-            "<webMaster>support@bloglines.com</webMaster>" +
-            "<bloglines:siteid>66</bloglines:siteid>" +
-            "<item>" +
-            "<title>An entry title</title>" +
-            "<dc:creator>John</dc:creator>" +
-            "<guid isPermaLink='true'>http://feed.example/2004/09/27/1.html</guid>" +
-            "<link>http://feed.example/2004/09/27/1.html</link>" +
-            "<description><![CDATA[Here is the entry text.]]></description>" +
-            "<pubDate>Mon, 27 Sep 2004 8:04:17 GMT</pubDate>" +
-            "<bloglines:itemid>12</bloglines:itemid>" +
-            "</item>" +
-            "</channel>" +
-            "</rss>";
+public class ItemsUnmarshallTestCase extends MockObjectTestCase {
+    public void testUnmarshallUsesSyndInputFeedToBuildSyndFeed() throws Exception {
+        String items = "Items to unmarshall";
+        Mock syndFeedInputMock = mock(SyndFeedInput.class);
+        SyndFeed expectedSyndFeed = (SyndFeed) mock(SyndFeed.class).proxy();
+        syndFeedInputMock.expects(once()).method("build").with(eqStringReader(items)).will(returnValue(expectedSyndFeed));
 
-    public void testUnmarshallFeedItems() throws BloglinesException {
-        ItemsUnmarshall itemUnmarshall = new ItemsUnmarshallImpl();
-        SyndFeed feed = itemUnmarshall.unmarshal(ITEMS);
-        assertEquals("Feed Title", feed.getTitle());
-        assertEquals("The description of the feed", feed.getDescription());
-        List entries = feed.getEntries();
-        assertEquals(1, entries.size());
-        SyndEntry entry = (SyndEntry) entries.get(0);
-        assertEquals("An entry title", entry.getTitle());
-        List contents = entry.getContents();
-        contents.getClass();
+        ItemsUnmarshall itemUnmarshall = new ItemsUnmarshallImpl((SyndFeedInput) syndFeedInputMock.proxy());
+
+        SyndFeed syndFeed = itemUnmarshall.unmarshal(items);
+
+        assertSame(expectedSyndFeed, syndFeed);
     }
+
+    public void testUnmarshallWrapsExceptionAsBloglinesException() throws Exception {
+        String items = "Items to unmarshall";
+        Mock syndFeedInputMock = mock(SyndFeedInput.class);
+        Throwable thrownException = new IllegalArgumentException();
+        syndFeedInputMock.expects(once()).method("build").with(eqStringReader(items)).will(throwException(thrownException));
+
+        ItemsUnmarshall itemUnmarshall = new ItemsUnmarshallImpl((SyndFeedInput) syndFeedInputMock.proxy());
+
+        try {
+            itemUnmarshall.unmarshal(items);
+            fail("Sould have thrown exception");
+        } catch (BloglinesException e) {
+            assertEquals("umarshalling items failed", e.getMessage());
+            assertSame(thrownException, e.getCause());
+        }
+
+    }
+
+    private class StringReaderContentsConstraint implements Constraint {
+        private String expectedStringContents;
+
+        public StringReaderContentsConstraint(String expectedStringContents) {
+            this.expectedStringContents = expectedStringContents;
+        }
+
+        public boolean eval(Object o) {
+            try {
+                StringReader stringReader = (StringReader) o;
+                char[] chars = new char[expectedStringContents.length() + 5];
+                int length = stringReader.read(chars);
+                String content = new String(chars, 0, length);
+                return content.equals(expectedStringContents);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        public StringBuffer describeTo(StringBuffer stringBuffer) {
+            return stringBuffer.append("<StringReader:{" + expectedStringContents + "}>");
+        }
+    }
+
+    private Constraint eqStringReader(String items) {
+        Constraint stringReaderContents = new StringReaderContentsConstraint(items);
+        return stringReaderContents;
+    }
+
 }

@@ -41,12 +41,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class BloglinesRestCallerImpl implements BloglinesRestCaller {
+    private final HttpCaller caller;
+    private final String encoding;
 
-    private HttpCaller caller;
-
-
-    public BloglinesRestCallerImpl(HttpCaller caller) {
+    public BloglinesRestCallerImpl(HttpCaller caller, String encoding) {
         this.caller = caller;
+        this.encoding = encoding;
     }
 
     public void setCredentials(String name, String password) {
@@ -56,16 +56,19 @@ public class BloglinesRestCallerImpl implements BloglinesRestCaller {
     public String call(String method, String[] args) throws BloglinesException {
         StringBuffer uri = new StringBuffer("http://rpc.bloglines.com/");
         uri.append(method);
-        if (args != null) {
+        if (args != null && args.length > 0) {
             uri.append("?");
-            for (int i = 0; i < args.length / 2; i += 2) {
+            for (int i = 0; i < args.length; i += 2) {
                 try {
-                    uri.append(args[i]).append("=").append(URLEncoder.encode(args[i + 1], "UTF-8"));
+                    if (i != 0) {
+                        uri.append("&");
+                    }
+                    uri.append(args[i]).append("=").append(URLEncoder.encode(args[i + 1], encoding));
                 } catch (UnsupportedEncodingException e) {
-                    throw new BloglinesException("failed to encode arg :" + args[i], e);
+                    throw new BloglinesException("bad encoding: " + encoding, e);
                 }
             }
         }
-        return caller.doGet(uri);
+        return caller.doGet(uri.toString());
     }
 }
