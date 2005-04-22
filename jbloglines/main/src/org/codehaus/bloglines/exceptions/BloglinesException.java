@@ -36,31 +36,15 @@
 
 package org.codehaus.bloglines.exceptions;
 
-
-/**
- * @author Zohar
- *
- */
 public class BloglinesException extends Exception {
+    private static final long serialVersionUID = 3257846597407815224L;
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
-	private static final long serialVersionUID = 3257846597407815224L;
+    public BloglinesException(String message, Throwable t) {
+        super(message, t);
+    }
 
-	/**
-	 * @param message
-	 * @param t
-	 */
-	public BloglinesException(String message, Throwable t) {
-		super(message,t);
-	}
-
-	/**
-	 * @param message
-	 */
-	public BloglinesException(String message) {
-		super(message);
-	}
+    public BloglinesException(String message) {
+        super(message);
+    }
 
 }

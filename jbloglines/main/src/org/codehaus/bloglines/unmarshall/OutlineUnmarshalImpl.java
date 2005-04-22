@@ -32,7 +32,6 @@
  * 
  *  
  */
-
 package org.codehaus.bloglines.unmarshall;
 
 import com.thoughtworks.xstream.XStream;
@@ -46,68 +45,57 @@ import org.codehaus.bloglines.Outline;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Zohar
- */
 public class OutlineUnmarshalImpl implements OutlineUnmarshal {
 
-    /**
-     * @param outline_opml
-     */
     public Outline unmarshal(String outlines) {
         XStream xstream = new XStream();
         xstream.alias("outline", Outline.class);
-        xstream.registerConverter(new Converter() {
-
-            public boolean canConvert(Class type) {
-                return type == Outline.class;
-            }
-
-            public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-                // no need as we never unmarshall
-            }
-
-            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-                Outline currentOutline = populateOutline(reader);
-                List children = new ArrayList();
-                while (reader.hasMoreChildren()) {
-                    reader.moveDown();
-                    Outline child = (Outline) unmarshal(reader, context);
-                    children.add(child);
-                }
-
-                if (!children.isEmpty()) {
-                    currentOutline.setChidlren((Outline[]) children
-                                                           .toArray(new Outline[children.size()]));
-                }
-
-                reader.moveUp();
-                return currentOutline;
-            }
-
-            /**
-             * @param reader
-             * @return
-             */
-            private Outline populateOutline(HierarchicalStreamReader reader) {
-                Outline outline = new Outline();
-                outline.setTitle(reader.getAttribute("title"));
-                outline.setType(reader.getAttribute("type"));
-                outline.setHtmlUrl(reader.getAttribute("htmlUrl"));
-                outline.setXmlUrl(reader.getAttribute("xmlUrl"));
-                outline.setSubscriptionId(reader.getAttribute("BloglinesSubId"));
-                outline.setIgnore("1".equals(reader
-                                             .getAttribute("BloglinesIgnore")));
-                String unread = reader.getAttribute("BloglinesUnread");
-                if (unread != null) {
-                    outline.setUnread(Integer.parseInt(unread));
-                }
-                return outline;
-            }
-
-        });
+        xstream.registerConverter(new OutlineConverter());
 
         return (Outline) xstream.fromXML(outlines.substring(outlines.indexOf("<outline"), outlines.length()));
     }
 
+    private static class OutlineConverter implements Converter {
+        public boolean canConvert(Class type) {
+            return type == Outline.class;
+        }
+
+        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+            // no need as we never unmarshall
+        }
+
+        public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+            Outline currentOutline = populateOutline(reader);
+            List children = new ArrayList();
+            while (reader.hasMoreChildren()) {
+                reader.moveDown();
+                Outline child = (Outline) unmarshal(reader, context);
+                children.add(child);
+            }
+
+            if (!children.isEmpty()) {
+                currentOutline.setChidlren((Outline[]) children
+                                                       .toArray(new Outline[children.size()]));
+            }
+
+            reader.moveUp();
+            return currentOutline;
+        }
+
+        private Outline populateOutline(HierarchicalStreamReader reader) {
+            Outline outline = new Outline();
+            outline.setTitle(reader.getAttribute("title"));
+            outline.setType(reader.getAttribute("type"));
+            outline.setHtmlUrl(reader.getAttribute("htmlUrl"));
+            outline.setXmlUrl(reader.getAttribute("xmlUrl"));
+            outline.setSubscriptionId(reader.getAttribute("BloglinesSubId"));
+            outline.setIgnore("1".equals(reader
+                                         .getAttribute("BloglinesIgnore")));
+            String unread = reader.getAttribute("BloglinesUnread");
+            if (unread != null) {
+                outline.setUnread(Integer.parseInt(unread));
+            }
+            return outline;
+        }
+    }
 }

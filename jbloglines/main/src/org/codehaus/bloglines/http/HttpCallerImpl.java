@@ -36,26 +36,22 @@ package org.codehaus.bloglines.http;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 
 import java.io.IOException;
 
-/**
- * @author Zohar
- *         <p/>
- *         TODO To change the template for this generated type comment go to
- *         Window - Preferences - Java - Code Style - Code Templates
- */
 public class HttpCallerImpl implements HttpCaller {
     private static final String BLOGLINES_RPC_URI = "rpc.bloglines.com";
     private static final String BLOGLINES_REALM = "Bloglines RPC";
-    private HttpClient client;
+    private final HttpClient client;
+    private final HttpMethodFactory httpMethodFactory;
 
-    public HttpCallerImpl(HttpClient client) {
+    public HttpCallerImpl(HttpClient client, HttpMethodFactory httpMethodFactory) {
         this.client = client;
+        this.httpMethodFactory = httpMethodFactory;
     }
 
     public void setCredentials(String name, String password) {
@@ -63,18 +59,13 @@ public class HttpCallerImpl implements HttpCaller {
                                          new UsernamePasswordCredentials(name, password));
     }
 
-    /* (non-Javadoc)
-     * @see org.codehaus.bloglines.HttpCaller#doGet(java.lang.StringBuffer)
-     */
-    public String doGet(StringBuffer uri) throws BloglinesException {
-        GetMethod get = null;
+    public String doGet(String uri) throws BloglinesException {
+        HttpMethod get = httpMethodFactory.createGetMethod(uri);
         try {
-            get = new GetMethod(uri.toString());
             get.setDoAuthentication(true);
             int status = client.executeMethod(get);
             if (status != HttpStatus.SC_OK) {
-                throw new BloglinesException("failed in call :" + uri + " http error: "
-                                             + HttpStatus.getStatusText(status));
+                throw new BloglinesException("Error " + status + " (" + HttpStatus.getStatusText(status) + ") in HTTP call: " + uri);
             }
             return get.getResponseBodyAsString();
         } catch (HttpException e) {
