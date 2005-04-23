@@ -51,114 +51,66 @@ public class Outline {
     private boolean ignore;
 
 
-    /**
-     * @return
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * @param title The title to set.
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * @return
-     */
     public boolean isFeed() {
         return "rss".equals(type);
     }
 
-    /**
-     * @return
-     */
     public Outline[] getChildren() {
         return children;
     }
 
-    /**
-     * @param children The children to set.
-     */
-    public void setChidlren(Outline[] children) {
+    public void setChildren(Outline[] children) {
         this.children = children;
     }
 
-    /**
-     * @param attribute
-     */
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * @return
-     */
     public String getHtmlUrl() {
         return htmlUrl;
     }
 
-    /**
-     * @param htmlUrl The htmlUrl to set.
-     */
     public void setHtmlUrl(String htmlUrl) {
         this.htmlUrl = htmlUrl;
     }
 
-    /**
-     * @return
-     */
     public String getXmlUrl() {
         return xmlUrl;
     }
 
-    /**
-     * @param xmlUrl The xmlUrl to set.
-     */
     public void setXmlUrl(String xmlUrl) {
         this.xmlUrl = xmlUrl;
     }
 
-    /**
-     * @return
-     */
     public int getUnread() {
         return unread;
     }
 
-    /**
-     * @param unread The unread to set.
-     */
     public void setUnread(int unread) {
         this.unread = unread;
     }
 
-    /**
-     * @return
-     */
     public String getSubscriptionId() {
         return subscriptionId;
     }
 
-    /**
-     * @param subscriptionId The subscriptionId to set.
-     */
     public void setSubscriptionId(String subscriptionId) {
         this.subscriptionId = subscriptionId;
     }
 
-    /**
-     *
-     */
     public boolean getIgnore() {
         return ignore;
     }
 
-    /**
-     * @param ignore
-     */
     public void setIgnore(boolean ignore) {
         this.ignore = ignore;
     }
