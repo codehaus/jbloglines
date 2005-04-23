@@ -8,8 +8,8 @@ import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCallerImpl;
 import org.codehaus.bloglines.http.HttpCallerImpl;
 import org.codehaus.bloglines.http.HttpMethodFactoryImpl;
-import org.codehaus.bloglines.unmarshall.ItemsUnmarshallImpl;
-import org.codehaus.bloglines.unmarshall.OutlineUnmarshalImpl;
+import org.codehaus.bloglines.unmarshal.ItemsUnmarshallermpl;
+import org.codehaus.bloglines.unmarshal.OutlineUnmarshallerImpl;
 
 /*
  * Created on Nov 24, 2004
@@ -65,14 +65,10 @@ public class BloglinesAcceptanceTests extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        bloglines = new Bloglines(new OutlineUnmarshalImpl(), new ItemsUnmarshallImpl(new SyndFeedInput()), new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), new HttpMethodFactoryImpl()), "UTF-8"));
+        bloglines = new Bloglines(new OutlineUnmarshallerImpl(), new ItemsUnmarshallermpl(new SyndFeedInput()), new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), new HttpMethodFactoryImpl()), "UTF-8"));
     }
 
-    public void testWhatever() {
-
-    }
-
-    public void _testListSubs() throws BloglinesException {
+    public void testListSubs() throws BloglinesException {
         bloglines.setCredentials(OWNER_NAME, PASSWORD);
         Outline topLevel = bloglines.listSubscriptions();
 
@@ -93,7 +89,7 @@ public class BloglinesAcceptanceTests extends TestCase {
         assertFalse(boingboing.getIgnore());
     }
 
-    public void _testGetItems() throws BloglinesException {
+    public void testGetItems() throws BloglinesException {
         bloglines.setCredentials(OWNER_NAME, PASSWORD);
         Outline topLevel = bloglines.listSubscriptions();
         Outline[] outlines = topLevel.getChildren();
