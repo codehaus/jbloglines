@@ -53,7 +53,7 @@ public class OutlineUnmarshallerTest extends TestCase {
             "<body>" +
             "    <outline title='Subscriptions'>" +
             "        <outline title='Bloglines | News' htmlUrl='http://www.bloglines.com' type='rss' xmlUrl='http://www.bloglines.com/rss/about/news'  BloglinesSubId='5259174'  BloglinesUnread='8' BloglinesIgnore='1' />" +
-            "        <outline title='Stuff' BloglinesSubId='5259181' BloglinesIgnore='0'>" +
+            "        <outline title='Stuff' BloglinesSubId='5259181' BloglinesIgnore='1'>" +
             "            <outline title='Boing Boing' htmlUrl='http://www.boingboing.net/' type='rss' xmlUrl='http://boingboing.net/rss.xml'  BloglinesSubId='5259182'  BloglinesUnread='36' BloglinesIgnore='0' />" +
             "        </outline>" +
             "    </outline>" +
@@ -84,12 +84,16 @@ public class OutlineUnmarshallerTest extends TestCase {
 
         Outline[] outlines = topLevel.getChildren();
         assertEquals(2, outlines.length);
+
         Outline stuff = outlines[1];
         assertEquals("Stuff", stuff.getTitle());
+        assertEquals(true, stuff.getIgnore());
         assertEquals(1, stuff.getChildren().length);
+
         Outline boingboing = stuff.getChildren()[0];
         assertEquals("Boing Boing", boingboing.getTitle());
         assertTrue(boingboing.isFeed());
+        assertEquals(false, boingboing.getIgnore());
         assertEquals("http://www.boingboing.net/", boingboing.getHtmlUrl());
         assertEquals("http://boingboing.net/rss.xml", boingboing.getXmlUrl());
         assertTrue(boingboing.getUnread() >= 26);

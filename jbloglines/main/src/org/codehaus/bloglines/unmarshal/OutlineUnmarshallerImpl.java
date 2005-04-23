@@ -92,8 +92,7 @@ public class OutlineUnmarshallerImpl implements OutlineUnmarshaller {
             outline.setHtmlUrl(reader.getAttribute("htmlUrl"));
             outline.setXmlUrl(reader.getAttribute("xmlUrl"));
             outline.setSubscriptionId(reader.getAttribute("BloglinesSubId"));
-// TODO - This line was not being tested.  I've commented it out so I can get a test failing before reincluding it.            
-//            outline.setIgnore("1".equals(reader.getAttribute("BloglinesIgnore")));
+            outline.setIgnore("1".equals(reader.getAttribute("BloglinesIgnore")));
             String unread = reader.getAttribute("BloglinesUnread");
             if (unread != null) {
                 outline.setUnread(Integer.parseInt(unread));
