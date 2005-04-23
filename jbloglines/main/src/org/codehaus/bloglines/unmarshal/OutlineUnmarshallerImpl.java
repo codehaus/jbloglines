@@ -46,12 +46,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OutlineUnmarshallerImpl implements OutlineUnmarshaller {
+    private XStream xstream;
 
-    public Outline unmarshal(String outlines) {
-        XStream xstream = new XStream();
+    public OutlineUnmarshallerImpl() {
+        xstream = new XStream();
         xstream.alias("outline", Outline.class);
         xstream.registerConverter(new OutlineConverter());
+    }
 
+    public Outline unmarshal(String outlines) {
         return (Outline) xstream.fromXML(outlines.substring(outlines.indexOf("<outline"), outlines.length()));
     }
 
@@ -74,8 +77,8 @@ public class OutlineUnmarshallerImpl implements OutlineUnmarshaller {
             }
 
             if (!children.isEmpty()) {
-                currentOutline.setChidlren((Outline[]) children
-                                                       .toArray(new Outline[children.size()]));
+                Outline[] newChildren = (Outline[]) children.toArray(new Outline[children.size()]);
+                currentOutline.setChildren(newChildren);
             }
 
             reader.moveUp();
@@ -89,8 +92,8 @@ public class OutlineUnmarshallerImpl implements OutlineUnmarshaller {
             outline.setHtmlUrl(reader.getAttribute("htmlUrl"));
             outline.setXmlUrl(reader.getAttribute("xmlUrl"));
             outline.setSubscriptionId(reader.getAttribute("BloglinesSubId"));
-            outline.setIgnore("1".equals(reader
-                                         .getAttribute("BloglinesIgnore")));
+// TODO - This line was not being tested.  I've commented it out so I can get a test failing before reincluding it.            
+//            outline.setIgnore("1".equals(reader.getAttribute("BloglinesIgnore")));
             String unread = reader.getAttribute("BloglinesUnread");
             if (unread != null) {
                 outline.setUnread(Integer.parseInt(unread));
