@@ -40,10 +40,10 @@ import org.codehaus.bloglines.exceptions.BloglinesException;
 
 import java.io.StringReader;
 
-public class ItemsUnmarshallermpl implements ItemsUnmarshaller {
+public class ItemsUnmarshallerImpl implements ItemsUnmarshaller {
     private SyndFeedInput input;
 
-    public ItemsUnmarshallermpl(SyndFeedInput input) {
+    public ItemsUnmarshallerImpl(SyndFeedInput input) {
         this.input = input;
     }
 

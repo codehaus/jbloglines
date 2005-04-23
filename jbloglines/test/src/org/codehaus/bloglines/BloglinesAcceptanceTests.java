@@ -8,7 +8,7 @@ import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCallerImpl;
 import org.codehaus.bloglines.http.HttpCallerImpl;
 import org.codehaus.bloglines.http.HttpMethodFactoryImpl;
-import org.codehaus.bloglines.unmarshal.ItemsUnmarshallermpl;
+import org.codehaus.bloglines.unmarshal.ItemsUnmarshallerImpl;
 import org.codehaus.bloglines.unmarshal.OutlineUnmarshallerImpl;
 
 /*
@@ -65,7 +65,7 @@ public class BloglinesAcceptanceTests extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        bloglines = new Bloglines(new OutlineUnmarshallerImpl(), new ItemsUnmarshallermpl(new SyndFeedInput()), new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), new HttpMethodFactoryImpl()), "UTF-8"));
+        bloglines = new Bloglines(new OutlineUnmarshallerImpl(), new ItemsUnmarshallerImpl(new SyndFeedInput()), new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), new HttpMethodFactoryImpl()), "UTF-8"));
     }
 
     public void testListSubs() throws BloglinesException {
