@@ -55,13 +55,13 @@ public class OutlineUnmarshalImpl implements OutlineUnmarshal {
         return (Outline) xstream.fromXML(outlines.substring(outlines.indexOf("<outline"), outlines.length()));
     }
 
-    private static class OutlineConverter implements Converter {
+    static class OutlineConverter implements Converter {
         public boolean canConvert(Class type) {
             return type == Outline.class;
         }
 
         public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
-            // no need as we never unmarshall
+            throw new UnsupportedOperationException();
         }
 
         public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {

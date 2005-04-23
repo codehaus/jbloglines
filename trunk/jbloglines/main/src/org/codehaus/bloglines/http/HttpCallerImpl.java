@@ -35,7 +35,6 @@
 package org.codehaus.bloglines.http;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -68,14 +67,10 @@ public class HttpCallerImpl implements HttpCaller {
                 throw new BloglinesException("Error " + status + " (" + HttpStatus.getStatusText(status) + ") in HTTP call: " + uri);
             }
             return get.getResponseBodyAsString();
-        } catch (HttpException e) {
-            throw new BloglinesException("failed in call :" + uri, e);
         } catch (IOException e) {
-            throw new BloglinesException("failed in call :" + uri, e);
+            throw new BloglinesException("Http call failed: " + uri, e);
         } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
+            get.releaseConnection();
         }
     }
 
