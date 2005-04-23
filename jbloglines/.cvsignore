@@ -1,5 +1,5 @@
 bin
 build
 classes
-jbloglines.ipr
-jbloglines.iws
+*.ipr
+*.iws
