@@ -3,8 +3,8 @@ package org.codehaus.bloglines;
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCaller;
-import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
-import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
+import org.codehaus.bloglines.unmarshal.ItemsUnmarshaller;
+import org.codehaus.bloglines.unmarshal.OutlineUnmarshaller;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 
@@ -19,11 +19,11 @@ public class BloglinesTest extends MockObjectTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         restCallerMock = mock(BloglinesRestCaller.class);
-        outlineMarshallMock = mock(OutlineUnmarshal.class);
-        itemUnmarshallMock = mock(ItemsUnmarshall.class);
+        outlineMarshallMock = mock(OutlineUnmarshaller.class);
+        itemUnmarshallMock = mock(ItemsUnmarshaller.class);
 
-        bloglines = new Bloglines((OutlineUnmarshal) outlineMarshallMock.proxy(),
-                                  (ItemsUnmarshall) itemUnmarshallMock.proxy(),
+        bloglines = new Bloglines((OutlineUnmarshaller) outlineMarshallMock.proxy(),
+                                  (ItemsUnmarshaller) itemUnmarshallMock.proxy(),
                                   (BloglinesRestCaller) restCallerMock.proxy());
     }
 

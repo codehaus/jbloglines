@@ -3,8 +3,8 @@ package org.codehaus.bloglines;
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCaller;
-import org.codehaus.bloglines.unmarshall.ItemsUnmarshall;
-import org.codehaus.bloglines.unmarshall.OutlineUnmarshal;
+import org.codehaus.bloglines.unmarshal.ItemsUnmarshaller;
+import org.codehaus.bloglines.unmarshal.OutlineUnmarshaller;
 
 import java.util.Date;
 
@@ -48,20 +48,20 @@ import java.util.Date;
 public final class Bloglines {
     private static final String GETITEMS = "getitems";
     private static final String LISTSUBS = "listsubs";
-    private OutlineUnmarshal outlineUnmarshal;
-    private ItemsUnmarshall itemUnmarshall;
+    private OutlineUnmarshaller outlineUnmarshaller;
+    private ItemsUnmarshaller itemUnmarshaller;
     private BloglinesRestCaller restCaller;
 
 
     /**
-     * @param outlineUnmarshal
-     * @param itemUnmarshall
+     * @param outlineUnmarshaller
+     * @param itemUnmarshaller
      * @param restCaller
      */
-    public Bloglines(OutlineUnmarshal outlineUnmarshal,
-                     ItemsUnmarshall itemUnmarshall, BloglinesRestCaller restCaller) {
-        this.outlineUnmarshal = outlineUnmarshal;
-        this.itemUnmarshall = itemUnmarshall;
+    public Bloglines(OutlineUnmarshaller outlineUnmarshaller,
+                     ItemsUnmarshaller itemUnmarshaller, BloglinesRestCaller restCaller) {
+        this.outlineUnmarshaller = outlineUnmarshaller;
+        this.itemUnmarshaller = itemUnmarshaller;
         this.restCaller = restCaller;
     }
 
@@ -75,13 +75,13 @@ public final class Bloglines {
 
     public Outline listSubscriptions() throws BloglinesException {
         String outline = restCaller.call(LISTSUBS, null);
-        return outlineUnmarshal.unmarshal(outline);
+        return outlineUnmarshaller.unmarshal(outline);
     }
 
     // TODO - startDate doesn't seem to be used
     public SyndFeed getItems(Outline containingOutline, boolean markasRead, Date startDate) throws BloglinesException {
         String items = restCaller.call(GETITEMS, new String[]{"s", containingOutline.getSubscriptionId(), "n", convertToFlag(markasRead)});
-        return itemUnmarshall.unmarshal(items);
+        return itemUnmarshaller.unmarshal(items);
     }
 
     private String convertToFlag(boolean markasRead) {
