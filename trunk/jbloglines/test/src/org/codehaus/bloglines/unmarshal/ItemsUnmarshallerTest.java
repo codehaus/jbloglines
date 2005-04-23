@@ -51,7 +51,7 @@ public class ItemsUnmarshallerTest extends MockObjectTestCase {
         SyndFeed expectedSyndFeed = (SyndFeed) mock(SyndFeed.class).proxy();
         syndFeedInputMock.expects(once()).method("build").with(eqStringReader(items)).will(returnValue(expectedSyndFeed));
 
-        ItemsUnmarshaller itemUnmarshaller = new ItemsUnmarshallermpl((SyndFeedInput) syndFeedInputMock.proxy());
+        ItemsUnmarshaller itemUnmarshaller = new ItemsUnmarshallerImpl((SyndFeedInput) syndFeedInputMock.proxy());
 
         SyndFeed syndFeed = itemUnmarshaller.unmarshal(items);
 
@@ -64,7 +64,7 @@ public class ItemsUnmarshallerTest extends MockObjectTestCase {
         Throwable thrownException = new IllegalArgumentException();
         syndFeedInputMock.expects(once()).method("build").with(eqStringReader(items)).will(throwException(thrownException));
 
-        ItemsUnmarshaller itemUnmarshaller = new ItemsUnmarshallermpl((SyndFeedInput) syndFeedInputMock.proxy());
+        ItemsUnmarshaller itemUnmarshaller = new ItemsUnmarshallerImpl((SyndFeedInput) syndFeedInputMock.proxy());
 
         try {
             itemUnmarshaller.unmarshal(items);
