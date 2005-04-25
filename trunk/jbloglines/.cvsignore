@@ -4,3 +4,4 @@ classes
 dist
 *.ipr
 *.iws
+junit*.properties
