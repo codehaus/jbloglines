@@ -1,57 +1,84 @@
 <?xml version="1.0"?>
-<!-- ====================================================================== 
-     10-Dec-2004 09:50:10                                                        
-
-     Bloglines Java API
-                   
-     Zohar                                                      
-     ====================================================================== -->
 <project name="bloglines" default="dist" basedir=".">
     <description>
     	Bloglines REST API Java binding
     </description>
-	<property name="location.classes" value="classes"/>
-	<property name="location.dist" value="dist"/>
-	<property name="location.lib" value="lib"/>
-	<property name="location.src" value="main/src"/>
-	<property name="location.src.test" value="test/src"/>
-	
-	<path  id="cp">	    
-		<fileset dir="${location.lib}" id="id">
-			<include name="**\*.jar"/>
-		</fileset>
-	</path>
+    <property name="location.classes" value="classes"/>
+    <property name="location.test.classes" value="classes"/>
+    <property name="location.dist" value="dist"/>
+    <property name="location.lib" value="lib"/>
+    <property name="location.src" value="main/src"/>
+    <property name="location.src.test" value="test/src"/>
+    <property name="location.report.junit" value="build/reports/junit"/>
 
+    <path id="cp">
+        <fileset dir="${location.lib}" id="id">
+            <include name="**\*.jar"/>
+        </fileset>
+    </path>
 
-
-    <target name="dist" depends="build">
-        <jar destfile="${location.dist}\bloglines.jar">
- 			<fileset dir="${location.classes}">
- 				<include name="**\*"/>
- 			</fileset>
-        </jar>
-    </target>
-
-	<target name="test" depends="build">
-	     <junit></junit>   
+    <target name="clean">
+        <delete dir="${location.classes}"/>
+        <delete dir="${location.dist}"/>
+        <mkdir dir="${location.dist}"/>
+        <mkdir dir="${location.classes}"/>
     </target>
 
     <target name="build" depends="clean">
-    	<javac srcdir="${location.src}"
-         destdir="${location.classes}"
-    	 classpathref="cp"	
-         debug="on"/>
-    	<javac srcdir="${location.src.test}"
-         destdir="${location.classes}"
-         classpathref="cp"
-    	 debug="on"/>
+        <javac srcdir="${location.src}"
+            destdir="${location.classes}"
+            classpathref="cp"
+            debug="on"/>
+        <javac srcdir="${location.src.test}"
+            destdir="${location.test.classes}"
+            classpathref="cp"
+            debug="on"/>
     </target>
-	
-    <target name="clean">
-    	<delete dir="${location.classes}"/>	
-    	<delete dir="${location.dist}"/>
-    	<mkdir dir="${location.dist}"/>
-    	<mkdir dir="${location.classes}"/>
+
+    <target name="test" depends="build">
+        <mkdir dir="${location.report.junit}"/>
+        <junit printsummary="true" fork="true" showoutput="true" failureproperty="test.fail">
+            <!-- forkPerBatch="false" -->
+            <formatter type="xml"/>
+            <classpath refid="cp"/>
+            <classpath location="${location.classes}"/>
+            <classpath location="${location.test.classes}"/>
+            <batchtest todir="${location.report.junit}">
+                <fileset dir="${location.src.test}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="development-version" unless="release">
+        <property file="version.properties"/>
+        <tstamp>
+            <format property="timestamp" pattern="yyyyMMddHHmm" locale="en" timezone="GMT"/>
+        </tstamp>
+        <property name="version" value="${jbloglines-api.version}-${timestamp}"/>
+    </target>
+
+    <target name="release-version" if="release">
+        <property file="version.properties"/>
+        <property name="version" value="${jbloglines-api.version}"/>
+    </target>
+
+    <target name="determine-version" depends="development-version, release-version">
+        <echo message="Version for build is: ${version}"/>
+    </target>
+
+    <target name="dist" depends="build, test, determine-version">
+        <jar destfile="${location.dist}\bloglines-${version}.jar">
+            <fileset dir="${location.classes}">
+                <include name="**\*"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="release">
+        <property name="release" value="true"/>
+        <antcall target="dist"/>
     </target>
 
 </project>
