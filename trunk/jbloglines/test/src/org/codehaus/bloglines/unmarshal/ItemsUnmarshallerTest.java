@@ -2,7 +2,7 @@
  * Created on Dec 9, 2004
  *
  * 
- * Copyright (c) Zohar Melamed All rights reserved.
+ * Copyright (c) Zohar Melamed & William Jones - All rights reserved.
  * 
  * 
  * Redistribution and use of this software and associated documentation
