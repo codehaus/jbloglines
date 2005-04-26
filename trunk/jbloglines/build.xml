@@ -37,7 +37,7 @@
 
     <target name="test" depends="build">
         <mkdir dir="${location.report.junit}"/>
-        <junit printsummary="true" fork="true" showoutput="true" failureproperty="test.fail">
+        <junit printsummary="true" fork="true" forkmode="perBatch" showoutput="true" failureproperty="test.fail">
             <!-- forkPerBatch="false" -->
             <formatter type="xml"/>
             <classpath refid="cp"/>
@@ -80,6 +80,8 @@
         <property name="release" value="true"/>
         <antcall target="dist"/>
     </target>
+
+    <target name="continuous-integration" depends="dist"/>
 
 </project>
 
