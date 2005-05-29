@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/rome-0.4.jar"/>
 	<classpathentry kind="lib" path="lib/jmock-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jmock-cglib-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/cglib-full-2.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
