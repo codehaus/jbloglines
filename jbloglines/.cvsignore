@@ -5,3 +5,4 @@ dist
 *.ipr
 *.iws
 junit*.properties
+test-classes
