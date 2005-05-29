@@ -4,7 +4,7 @@
     	Bloglines REST API Java binding
     </description>
     <property name="location.classes" value="classes"/>
-    <property name="location.test.classes" value="classes"/>
+    <property name="location.test.classes" value="test-classes"/>
     <property name="location.dist" value="dist"/>
     <property name="location.lib" value="lib"/>
     <property name="location.src" value="main/src"/>
@@ -19,9 +19,11 @@
 
     <target name="clean">
         <delete dir="${location.classes}"/>
+        <delete dir="${location.test.classes}"/>
         <delete dir="${location.dist}"/>
         <mkdir dir="${location.dist}"/>
         <mkdir dir="${location.classes}"/>
+        <mkdir dir="${location.test.classes}"/>
     </target>
 
     <target name="build" depends="clean">
@@ -32,7 +34,9 @@
         <javac srcdir="${location.src.test}"
             destdir="${location.test.classes}"
             classpathref="cp"
-            debug="on"/>
+            debug="on">
+        	<classpath location="${location.classes}"/>
+    	</javac>
     </target>
 
     <target name="test" depends="build">
@@ -45,7 +49,7 @@
             <classpath location="${location.test.classes}"/>
             <batchtest todir="${location.report.junit}">
                 <fileset dir="${location.src.test}">
-                    <include name="**/*Test.java"/>
+                    <include name="**/*Test*.java"/>
                 </fileset>
             </batchtest>
         </junit>
