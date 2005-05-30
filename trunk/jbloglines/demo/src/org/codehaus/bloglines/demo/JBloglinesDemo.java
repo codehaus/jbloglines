@@ -73,9 +73,11 @@ public class JBloglinesDemo extends JFrame {
 		public EntryWrapper(SyndEntry entry) {
 			this.entry = entry;
 		}
+
 		public String toString() {
 			return entry.getTitle();
 		}
+
 		/**
 		 * @return Returns the entry.
 		 */
@@ -87,6 +89,7 @@ public class JBloglinesDemo extends JFrame {
 	public class FeedWrapper {
 
 		private final Outline subscription;
+
 		private final String name;
 
 		public FeedWrapper(String name, Outline subscription) {
@@ -94,7 +97,6 @@ public class JBloglinesDemo extends JFrame {
 			this.subscription = subscription;
 		}
 
-		
 		/**
 		 * @return Returns the subscription.
 		 */
@@ -102,13 +104,11 @@ public class JBloglinesDemo extends JFrame {
 			return subscription;
 		}
 
-
 		public String toString() {
-			return name +"("+subscription.getUnread()+")";
+			return name + "(" + subscription.getUnread() + ")";
 		}
 	}
 
-		
 	private static final int COL_COUNT = 6;
 
 	/**
@@ -145,7 +145,7 @@ public class JBloglinesDemo extends JFrame {
 		}
 		FormLayout formLayout = new FormLayout(
 				"left:max(40dlu;pref), 3dlu, 100dlu:grow,3dlu,70dlu,pref:grow",
-				"pref,pref,pref,pref,pref,pref,pref,fill:pref:grow");
+				"pref,pref,pref,pref,pref,pref,pref,fill:100dlu:grow");
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(formLayout);
 
@@ -160,13 +160,14 @@ public class JBloglinesDemo extends JFrame {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				try {
 					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-					bloglines.setCredentials(userName.getText(),new String(password.getPassword()));
-					Outline subscriptions  = bloglines.listSubscriptions();
-					((DefaultListModel)subscriptionsList.getModel()).clear();
-					showSubscriptions("",subscriptions);
+					bloglines.setCredentials(userName.getText(), new String(
+							password.getPassword()));
+					Outline subscriptions = bloglines.listSubscriptions();
+					((DefaultListModel) subscriptionsList.getModel()).clear();
+					showSubscriptions("", subscriptions);
 				} catch (BloglinesException e1) {
 					e1.printStackTrace();
-				}finally{
+				} finally {
 					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 			}
@@ -182,32 +183,35 @@ public class JBloglinesDemo extends JFrame {
 
 		builder.appendSeparator("Subscriptions");
 		subscriptionsList = new JList(new DefaultListModel());
-		subscriptionsList.addListSelectionListener(new ListSelectionListener(){
+		subscriptionsList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(javax.swing.event.ListSelectionEvent e) {
 				if (e.getValueIsAdjusting() == false) {
-					FeedWrapper feed = (FeedWrapper) subscriptionsList.getSelectedValue();
-					((DefaultListModel)itemsList.getModel()).clear();
+					FeedWrapper feed = (FeedWrapper) subscriptionsList
+							.getSelectedValue();
+					((DefaultListModel) itemsList.getModel()).clear();
 					showFeedItems(feed);
 				}
 			}
 		});
-		
+
 		JScrollPane scrollPane = new JScrollPane(subscriptionsList);
 		builder.append(scrollPane, COL_COUNT);
 
 		builder.appendSeparator("Items");
 		itemsList = new JList(new DefaultListModel());
-		itemsList.addListSelectionListener(new ListSelectionListener(){
+		itemsList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-				if (e.getValueIsAdjusting() == false ) {
+				if (e.getValueIsAdjusting() == false) {
 					itemDetail.setText("");
-					EntryWrapper wrapper = (EntryWrapper) itemsList.getSelectedValue();
-					if(wrapper!=null){
+					EntryWrapper wrapper = (EntryWrapper) itemsList
+							.getSelectedValue();
+					if (wrapper != null) {
 						SyndEntry entry = wrapper.getEntry();
 						SyndContent description = entry.getDescription();
-						if(description != null){
-							
-							itemDetail.setText("<html>"+description.getValue()+"</html>");
+						if (description != null) {
+							itemDetail.setText("<html>"
+									+ description.getValue());
+							itemDetail.setCaretPosition(0);
 						}
 					}
 				}
@@ -216,21 +220,21 @@ public class JBloglinesDemo extends JFrame {
 		scrollPane = new JScrollPane(itemsList);
 		builder.append(scrollPane, COL_COUNT);
 
-		itemDetail = new JEditorPane("text/html" ,"");
+		itemDetail = new JEditorPane("text/html", "");
 		itemDetail.setEditable(false);
 		scrollPane = new JScrollPane(itemDetail);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		builder.append(scrollPane, COL_COUNT);
 
 		getContentPane().add(builder.getPanel());
 	}
 
-	
 	private void showFeedItems(FeedWrapper feed) {
 		Outline subscription = feed.getSubscription();
 		try {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			SyndFeed items = bloglines.getItems(subscription,false,null);
+			SyndFeed items = bloglines.getItems(subscription, false, null);
 			List entries = items.getEntries();
 			DefaultListModel model = (DefaultListModel) itemsList.getModel();
 			for (Iterator iter = entries.iterator(); iter.hasNext();) {
@@ -239,20 +243,23 @@ public class JBloglinesDemo extends JFrame {
 			}
 		} catch (BloglinesException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
-	private void showSubscriptions(String parent,Outline subscription) {
-		if(subscription.isFeed()){
-			DefaultListModel model =  (DefaultListModel) subscriptionsList.getModel();
-			model.addElement(new FeedWrapper(parent+"::"+subscription.getTitle(),subscription));
-		}else{
+	private void showSubscriptions(String parent, Outline subscription) {
+		if (subscription.isFeed()) {
+			DefaultListModel model = (DefaultListModel) subscriptionsList
+					.getModel();
+			model.addElement(new FeedWrapper(parent + "::"
+					+ subscription.getTitle(), subscription));
+		} else {
 			Outline[] children = subscription.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				showSubscriptions(parent +" > "+subscription.getTitle(),children[i]);
-			}			
+				showSubscriptions(parent + " > " + subscription.getTitle(),
+						children[i]);
+			}
 		}
 	}
 
