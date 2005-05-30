@@ -9,6 +9,7 @@
     <property name="location.lib" value="lib"/>
     <property name="location.src" value="main/src"/>
     <property name="location.src.test" value="test/src"/>
+    <property name="location.src.demo" value="demo/src"/>
     <property name="location.report.junit" value="build/reports/junit"/>
 
     <path id="cp">
@@ -31,6 +32,10 @@
             destdir="${location.classes}"
             classpathref="cp"
             debug="on"/>
+        <javac srcdir="${location.src.demo}"
+                destdir="${location.classes}"
+                classpathref="cp"
+                debug="on"/>
         <javac srcdir="${location.src.test}"
             destdir="${location.test.classes}"
             classpathref="cp"
@@ -85,6 +90,16 @@
         <antcall target="dist"/>
     </target>
 
+	<target name="demo">
+		<java classname="org.codehaus.bloglines.demo.JBloglinesDemo" classpathref="cp" fork="true">
+			<classpath>
+		        <fileset dir="${location.dist}">
+		            <include name="**\*.jar"/>
+		        </fileset>
+		</classpath>								
+		</java>
+	</target>
+	
     <target name="continuous-integration" depends="dist"/>
 
 </project>
