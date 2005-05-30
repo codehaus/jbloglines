@@ -35,6 +35,7 @@
  */
 package org.codehaus.bloglines.demo;
 
+import java.awt.Cursor;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -51,15 +52,9 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.codehaus.bloglines.Bloglines;
 import org.codehaus.bloglines.Outline;
 import org.codehaus.bloglines.exceptions.BloglinesException;
-import org.codehaus.bloglines.http.BloglinesRestCallerImpl;
-import org.codehaus.bloglines.http.HttpCallerImpl;
-import org.codehaus.bloglines.http.HttpMethodFactoryImpl;
-import org.codehaus.bloglines.unmarshal.ItemsUnmarshallerImpl;
-import org.codehaus.bloglines.unmarshal.OutlineUnmarshallerImpl;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -68,7 +63,6 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
 
 public class JBloglinesDemo extends JFrame {
 
@@ -110,10 +104,11 @@ public class JBloglinesDemo extends JFrame {
 
 
 		public String toString() {
-			return name;
+			return name +"("+subscription.getUnread()+")";
 		}
 	}
 
+		
 	private static final int COL_COUNT = 6;
 
 	/**
@@ -127,7 +122,7 @@ public class JBloglinesDemo extends JFrame {
 
 	private JList subscriptionsList;
 
-	private Bloglines bloglines;
+	private Bloglines bloglines = new Bloglines();
 
 	private JPasswordField password;
 
@@ -138,10 +133,6 @@ public class JBloglinesDemo extends JFrame {
 	 */
 	public JBloglinesDemo() throws HeadlessException {
 		super("JBloglines Demo");
-		bloglines = new Bloglines(new OutlineUnmarshallerImpl(),
-								  new ItemsUnmarshallerImpl(new SyndFeedInput()),
-								  new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), new HttpMethodFactoryImpl()),"UTF-8"));
-
 	}
 
 	private void createComponents() {
@@ -167,13 +158,16 @@ public class JBloglinesDemo extends JFrame {
 		JButton connect = new JButton("Connect");
 		connect.addActionListener(new ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				bloglines.setCredentials(userName.getText(),new String(password.getPassword()));
 				try {
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					bloglines.setCredentials(userName.getText(),new String(password.getPassword()));
 					Outline subscriptions  = bloglines.listSubscriptions();
 					((DefaultListModel)subscriptionsList.getModel()).clear();
 					showSubscriptions("",subscriptions);
 				} catch (BloglinesException e1) {
 					e1.printStackTrace();
+				}finally{
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 			}
 		});
@@ -208,10 +202,13 @@ public class JBloglinesDemo extends JFrame {
 				if (e.getValueIsAdjusting() == false ) {
 					itemDetail.setText("");
 					EntryWrapper wrapper = (EntryWrapper) itemsList.getSelectedValue();
-					SyndEntry entry = wrapper.getEntry();
-					SyndContent description = entry.getDescription();
-					if(description != null){
-						itemDetail.setText(description.getValue());
+					if(wrapper!=null){
+						SyndEntry entry = wrapper.getEntry();
+						SyndContent description = entry.getDescription();
+						if(description != null){
+							
+							itemDetail.setText("<html>"+description.getValue()+"</html>");
+						}
 					}
 				}
 			}
@@ -219,15 +216,20 @@ public class JBloglinesDemo extends JFrame {
 		scrollPane = new JScrollPane(itemsList);
 		builder.append(scrollPane, COL_COUNT);
 
-		itemDetail = new JEditorPane();
-		builder.append(new JScrollPane(itemDetail), COL_COUNT);
+		itemDetail = new JEditorPane("text/html" ,"");
+		itemDetail.setEditable(false);
+		scrollPane = new JScrollPane(itemDetail);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		builder.append(scrollPane, COL_COUNT);
 
 		getContentPane().add(builder.getPanel());
 	}
 
+	
 	private void showFeedItems(FeedWrapper feed) {
 		Outline subscription = feed.getSubscription();
 		try {
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			SyndFeed items = bloglines.getItems(subscription,false,null);
 			List entries = items.getEntries();
 			DefaultListModel model = (DefaultListModel) itemsList.getModel();
@@ -237,6 +239,8 @@ public class JBloglinesDemo extends JFrame {
 			}
 		} catch (BloglinesException e) {
 			e.printStackTrace();
+		}finally{
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
