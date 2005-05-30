@@ -33,13 +33,21 @@
  */
 package org.codehaus.bloglines;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import java.util.Date;
+
+import org.apache.commons.httpclient.HttpClient;
 import org.codehaus.bloglines.exceptions.BloglinesException;
 import org.codehaus.bloglines.http.BloglinesRestCaller;
+import org.codehaus.bloglines.http.BloglinesRestCallerImpl;
+import org.codehaus.bloglines.http.HttpCallerImpl;
+import org.codehaus.bloglines.http.HttpMethodFactoryImpl;
 import org.codehaus.bloglines.unmarshal.ItemsUnmarshaller;
+import org.codehaus.bloglines.unmarshal.ItemsUnmarshallerImpl;
 import org.codehaus.bloglines.unmarshal.OutlineUnmarshaller;
+import org.codehaus.bloglines.unmarshal.OutlineUnmarshallerImpl;
 
-import java.util.Date;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
 
 
 /**
@@ -51,6 +59,14 @@ public final class Bloglines {
     private OutlineUnmarshaller outlineUnmarshaller;
     private ItemsUnmarshaller itemUnmarshaller;
     private BloglinesRestCaller restCaller;
+
+    
+	public Bloglines() {
+		this(new OutlineUnmarshallerImpl(),
+				  new ItemsUnmarshallerImpl(new SyndFeedInput()),
+				  new BloglinesRestCallerImpl(new HttpCallerImpl(new HttpClient(), 
+				  new HttpMethodFactoryImpl()),"UTF-8"));
+	}
 
 
     /**
